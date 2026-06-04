@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CoreBoard - 社内ボード（開発中サンプル）</title>
+<style>
+  :root{
+    --acc:#06b6d4; --acc2:#22d3ee; --accd:#0891b2;
+    --bg:#0e1116; --bg2:#161b22; --bg3:#1d242e; --bg4:#252e3a;
+    --text:#e6edf3; --text2:#9aa7b4; --text3:#6b7886;
+    --border:rgba(255,255,255,.10); --r:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic Medium","Meiryo",sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+  button{font-family:inherit;cursor:pointer}
+
+  .dev-badge{display:inline-flex;align-items:center;gap:5px;margin-left:10px;padding:3px 9px;border-radius:999px;
+    font-size:11px;font-weight:700;white-space:nowrap;color:#fff;border:1px solid rgba(255,255,255,.25);
+    background:repeating-linear-gradient(45deg,#0891b2,#0891b2 8px,#0e7490 8px,#0e7490 16px)}
+
+  #cb-login{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(1200px 600px at 50% -10%,#0c3b46 0%,#0a1418 55%,#090d0f 100%)}
+  #cb-login .lc{width:min(92vw,380px);background:rgba(16,28,32,.9);border:1px solid rgba(6,182,212,.35);
+    border-radius:16px;padding:30px 26px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  #cb-login .lg{font-size:30px;font-weight:800}
+  #cb-login .lg b{color:var(--acc2)}
+  #cb-login .sub{margin-top:6px;font-size:13px;color:#8fb4bd}
+  #cb-login .badge{margin:16px auto 0}
+  #cb-login .btn{margin-top:20px;width:100%;padding:12px;border:0;border-radius:10px;background:var(--accd);color:#fff;font-size:15px;font-weight:700}
+  #cb-login .btn:hover{background:var(--acc)}
+  #cb-login .btn.ghost{background:transparent;border:1px solid rgba(143,180,189,.35);color:#7fa3ac;cursor:not-allowed;margin-top:10px}
+  #cb-login .note{margin-top:16px;font-size:11.5px;line-height:1.6;color:#6e8d95}
+  #cb-login .ver{margin-top:14px;font-size:11px;color:#5a747b}
+
+  #app{display:grid;grid-template-columns:230px 1fr;grid-template-rows:54px 1fr;height:100vh}
+  #topbar{grid-column:1/3;display:flex;align-items:center;gap:10px;padding:0 14px;background:var(--bg2);border-bottom:1px solid var(--border)}
+  .logo{font-size:18px;font-weight:800}
+  .logo b{color:var(--acc2)}
+  .logo .ver{font-size:11px;color:var(--text3);font-weight:600;margin-left:4px}
+  .spacer{flex:1}
+  .tb-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:7px 12px;font-size:13px}
+  .tb-btn.primary{background:var(--accd);border-color:var(--accd);color:#fff;font-weight:600}
+
+  #side{background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;padding:12px 0}
+  .sg{font-size:10px;color:var(--text3);letter-spacing:.08em;padding:12px 16px 4px;text-transform:uppercase}
+  .si{display:flex;align-items:center;gap:8px;padding:9px 16px;cursor:pointer;font-size:13px;color:var(--text2)}
+  .si:hover{background:var(--bg3);color:var(--text)}
+  .si.on{background:var(--bg3);color:var(--text);box-shadow:inset 3px 0 0 var(--acc)}
+  .si .mc{margin-left:auto;font-size:10.5px;color:var(--text3)}
+
+  #main{overflow:auto;padding:16px 18px}
+  .bhead{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+  .btitle{font-size:18px;font-weight:800}
+  .bscope{font-size:11px;font-weight:700;color:var(--acc2);background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.4);padding:3px 10px;border-radius:999px}
+  .bmem{display:flex;gap:4px}
+  .av{width:26px;height:26px;border-radius:50%;background:var(--accd);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg)}
+  .cols{display:flex;gap:12px;align-items:flex-start;overflow-x:auto;padding-bottom:14px}
+  .col{flex:0 0 250px;background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--acc);border-radius:var(--r)}
+  .col-h{padding:10px 12px;font-size:13px;font-weight:700;display:flex;align-items:center;border-bottom:1px solid var(--border)}
+  .col-h .cnt{margin-left:auto;font-size:11px;color:var(--acc2);background:rgba(6,182,212,.12);padding:1px 8px;border-radius:10px}
+  .col-b{padding:8px;display:flex;flex-direction:column;gap:8px;min-height:60px}
+  .card{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--acc);border-radius:8px;padding:9px 10px;cursor:grab}
+  .card:hover{border-color:var(--acc)}
+  .card.dragging{opacity:.4}
+  .ct{font-size:13px;font-weight:600;line-height:1.4}
+  .cm{display:flex;gap:6px;align-items:center;margin-top:7px;flex-wrap:wrap}
+  .cdue{font-size:10px;color:var(--text3)}
+  .cdue.near{color:#f59e0b;font-weight:700}
+  .cas{font-size:10px;font-weight:700;color:#fff;background:var(--accd);border-radius:999px;padding:2px 8px}
+  .addc{background:none;border:1px dashed var(--border);border-radius:8px;color:var(--text3);font-size:12px;padding:7px}
+  .addc:hover{color:var(--acc2);border-color:var(--acc)}
+  .col.dover{background:rgba(6,182,212,.08);outline:2px dashed var(--acc);outline-offset:-2px}
+  .note{font-size:11px;color:var(--text3);line-height:1.7;margin-top:6px}
+</style>
+</head>
+<body>
+
+<div id="cb-login">
+  <div class="lc">
+    <div class="lg">📋 Core<b>Board</b></div>
+    <div class="sub">社内ボード（Trello代替・小林モータース）</div>
+    <div class="badge dev-badge">🚧 開発中サンプル</div>
+    <button class="btn" onclick="cbLogin()">サンプルとして入る（開発用）</button>
+    <button class="btn ghost" disabled>Google でログイン（後日対応）</button>
+    <div class="note">構想モックです。データはすべてサンプル。本実装ではCoreFlowの名簿（portalMembers）と連動し、ボードごとに共有範囲・担当を設定できます。</div>
+    <div class="ver">CoreBoard v0.1.0 (mock)</div>
+  </div>
+</div>
+
+<div id="app">
+  <div id="topbar">
+    <div class="logo">📋 Core<b>Board</b><span class="ver">v0.1.0</span></div>
+    <span class="dev-badge">🚧 開発中サンプル</span>
+    <div class="spacer"></div>
+    <button class="tb-btn primary" onclick="alert('ボードの新規作成は本実装で。\nスコープ（プロジェクト/部署/個人）と共有メンバーを選んで作る形になります。')">＋ ボード作成</button>
+  </div>
+
+  <div id="side"><div id="side-body"></div></div>
+
+  <div id="main">
+    <div class="bhead">
+      <div class="btitle" id="b-title"></div>
+      <span class="bscope" id="b-scope"></span>
+      <div class="bmem" id="b-mem"></div>
+    </div>
+    <div class="cols" id="cols"></div>
+    <div class="note">💡 カードは列から列へ<b>ドラッグで移動</b>できます（サンプル）。本実装：担当はCoreFlow名簿から割当・期限・コメント・チェックリスト・リアルタイム同期。</div>
+  </div>
+</div>
+
+<script>
+/* ===== サンプルログイン ===== */
+function cbLogin(){ try{localStorage.setItem('cb_authed','1')}catch(e){} document.getElementById('cb-login').style.display='none'; }
+(function(){ let a=false; try{a=localStorage.getItem('cb_authed')==='1'}catch(e){} if(a)document.getElementById('cb-login').style.display='none'; })();
+
+/* ===== サンプルデータ ===== */
+const BOARDS=[
+  { id:'b1', scope:'プロジェクト', name:'HPリニューアル', members:['ゆ','デ','椎'],
+    cols:[
+      { name:'やること', cards:[
+        {t:'トップページのワイヤー作成', as:'デ', due:'6/10'},
+        {t:'コラム一覧の構成決め（CoreNoteの階層図参照）', as:'ゆ', due:'6/8'},
+        {t:'写真素材の選定', as:'椎', due:''}]},
+      { name:'進行中', cards:[
+        {t:'サーバー移転の見積もり', as:'ゆ', due:'6/5'},
+        {t:'ロゴデータの整理', as:'デ', due:''}]},
+      { name:'確認待ち', cards:[
+        {t:'料金表ページの文言チェック', as:'ゆ', due:'6/6'}]},
+      { name:'完了', cards:[
+        {t:'ドメイン更新', as:'ゆ', due:''}]}
+    ]},
+  { id:'b2', scope:'部署', name:'車販部', members:['箱','林','ゆ'],
+    cols:[
+      { name:'今週', cards:[
+        {t:'展示場の配置替え', as:'箱', due:'6/7'},
+        {t:'オークション出品リスト作成', as:'林', due:'6/6'}]},
+      { name:'進行中', cards:[
+        {t:'下取り査定キャンペーンのPOP', as:'箱', due:''}]},
+      { name:'完了', cards:[
+        {t:'5月の販売実績まとめ', as:'林', due:''}]}
+    ]},
+  { id:'b3', scope:'プロジェクト', name:'YouTube動画制作', members:['ゆ','椎'],
+    cols:[
+      { name:'ネタ案', cards:[
+        {t:'エンジン降ろし大作業の密着', as:'ゆ', due:''},
+        {t:'代車20台どう管理してる？裏側公開', as:'ゆ', due:''}]},
+      { name:'撮影待ち', cards:[
+        {t:'車検の流れ解説（PitFlow画面付き）', as:'椎', due:'6/12'}]},
+      { name:'編集中', cards:[
+        {t:'工具紹介 第3弾', as:'ゆ', due:'6/9'}]},
+      { name:'公開済み', cards:[]}
+    ]},
+  { id:'b4', scope:'個人', name:'ゆうた個人', members:['ゆ'],
+    cols:[
+      { name:'ToDo', cards:[
+        {t:'混雑アルゴリズムの数字を考える', as:'ゆ', due:''},
+        {t:'Trello・Miroの解約タイミング検討', as:'ゆ', due:''}]},
+      { name:'完了', cards:[
+        {t:'CoreBoard/CoreNoteの名前決め', as:'ゆ', due:''}]}
+    ]}
+];
+let cur='b1';
+let drag=null; // {bi, ci, ki}
+
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function renderSide(){
+  const groups={};
+  BOARDS.forEach(function(b){ (groups[b.scope]=groups[b.scope]||[]).push(b); });
+  let h='';
+  ['プロジェクト','部署','個人'].forEach(function(g){
+    if(!groups[g]) return;
+    h+='<div class="sg">'+(g==='プロジェクト'?'📁':'')+(g==='部署'?'🏢':'')+(g==='個人'?'👤':'')+' '+g+'</div>';
+    groups[g].forEach(function(b){
+      h+='<div class="si'+(b.id===cur?' on':'')+'" onclick="cbOpen(\''+b.id+'\')">📋 '+esc(b.name)+'<span class="mc">'+b.members.length+'人</span></div>';
+    });
+  });
+  document.getElementById('side-body').innerHTML=h;
+}
+
+function renderBoard(){
+  const b=BOARDS.find(function(x){return x.id===cur;});
+  if(!b) return;
+  document.getElementById('b-title').textContent='📋 '+b.name;
+  document.getElementById('b-scope').textContent=b.scope+'ボード';
+  document.getElementById('b-mem').innerHTML=b.members.map(function(m){return '<span class="av" title="メンバー">'+esc(m)+'</span>';}).join('');
+  let h='';
+  b.cols.forEach(function(c,ci){
+    h+='<div class="col" data-ci="'+ci+'" ondragover="cbOver(event)" ondragleave="cbLeave(event)" ondrop="cbDrop(event,'+ci+')">';
+    h+='<div class="col-h">'+esc(c.name)+'<span class="cnt">'+c.cards.length+'</span></div>';
+    h+='<div class="col-b">';
+    c.cards.forEach(function(k,ki){
+      h+='<div class="card" draggable="true" ondragstart="cbDrag(event,'+ci+','+ki+')" ondragend="cbDragEnd(event)">';
+      h+='<div class="ct">'+esc(k.t)+'</div>';
+      h+='<div class="cm"><span class="cas">'+esc(k.as)+'</span>'+(k.due?'<span class="cdue near">⏰ '+esc(k.due)+'</span>':'')+'</div>';
+      h+='</div>';
+    });
+    h+='<button class="addc" onclick="cbAdd('+ci+')">＋ カードを追加</button>';
+    h+='</div></div>';
+  });
+  document.getElementById('cols').innerHTML=h;
+}
+
+function cbOpen(id){ cur=id; renderSide(); renderBoard(); }
+function cbAdd(ci){
+  const t=prompt('カードの内容：'); if(!t) return;
+  const b=BOARDS.find(function(x){return x.id===cur;});
+  b.cols[ci].cards.push({t:t, as:'ゆ', due:''});
+  renderBoard();
+}
+function cbDrag(e,ci,ki){ drag={ci:ci,ki:ki}; e.target.classList.add('dragging'); if(e.dataTransfer){e.dataTransfer.effectAllowed='move';} }
+function cbDragEnd(e){ e.target.classList.remove('dragging'); document.querySelectorAll('.col.dover').forEach(function(c){c.classList.remove('dover');}); }
+function cbOver(e){ if(!drag) return; e.preventDefault(); const col=e.currentTarget; col.classList.add('dover'); }
+function cbLeave(e){ e.currentTarget.classList.remove('dover'); }
+function cbDrop(e,ci){
+  e.preventDefault();
+  document.querySelectorAll('.col.dover').forEach(function(c){c.classList.remove('dover');});
+  if(!drag) return;
+  const b=BOARDS.find(function(x){return x.id===cur;});
+  if(drag.ci===ci){ drag=null; return; }
+  const k=b.cols[drag.ci].cards.splice(drag.ki,1)[0];
+  if(k) b.cols[ci].cards.push(k);
+  drag=null;
+  renderBoard();
+}
+
+renderSide(); renderBoard();
+</script>
+</body>
+</html>
