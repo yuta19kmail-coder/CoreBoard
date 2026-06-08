@@ -62,7 +62,54 @@
   .b-tools button:hover{border-color:var(--acc)}
   .b-tools button.act{border-color:var(--acc);color:var(--acc2)}
 
-  #board{flex:1;overflow-x:auto;overflow-y:hidden;padding:14px 16px}
+  #board{flex:1;overflow:auto;padding:14px 16px}
+  /* ===== ビュータブ ===== */
+  .v-tabs{display:flex;gap:4px;padding:7px 16px 0;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto}
+  .vtab{background:none;border:0;border-bottom:2px solid transparent;color:var(--text2);padding:8px 12px;font-size:13px;border-radius:7px 7px 0 0;white-space:nowrap}
+  .vtab:hover{background:var(--bg3);color:var(--text)}
+  .vtab.on{color:var(--acc2);border-bottom-color:var(--acc);font-weight:700}
+  /* テーブル */
+  table.vt{width:100%;border-collapse:collapse;font-size:13px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  table.vt th{background:var(--bg3);text-align:left;padding:9px 12px;font-size:11.5px;color:var(--text2);border-bottom:1px solid var(--border)}
+  table.vt td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+  table.vt tr{cursor:pointer}
+  table.vt tbody tr:hover td{background:var(--bg3)}
+  .tdot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle}
+  /* カレンダー */
+  .cal-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .cal-head button{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 10px}
+  .cal-head .cal-ym{font-weight:700;font-size:14px;min-width:110px;text-align:center}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+  .cal-dow{text-align:center;font-size:11px;color:var(--text2);padding-bottom:2px}
+  .cal-dow.sun{color:#f87171}.cal-dow.sat{color:#60a5fa}
+  .cal-cell{min-height:98px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:5px 6px;display:flex;flex-direction:column;gap:3px}
+  .cal-cell.empty{background:transparent;border:none}
+  .cal-cell.today{border-color:var(--acc)}
+  .cal-d{font-size:11px;font-weight:700}.cal-d.sun{color:#f87171}.cal-d.sat{color:#60a5fa}
+  .cal-card{font-size:11px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:2px 5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cal-card.over{border-color:#b91c1c}.cal-card.today{border-color:#b45309}
+  .cc-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:middle}
+  /* ダッシュボード */
+  .dash-stat{font-size:13px;color:var(--text2);margin-bottom:12px}
+  .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .dash-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+  .dash-h{font-size:13px;font-weight:700;margin-bottom:10px}
+  .dbar{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px}
+  .dbar-l{width:120px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dbar-t{flex:1;background:var(--bg4);height:14px;border-radius:7px;overflow:hidden}
+  .dbar-t i{display:block;height:100%;border-radius:7px}
+  .dbar-v{width:26px;text-align:right;font-weight:700}
+  @media(max-width:680px){.dash-grid{grid-template-columns:1fr}}
+  /* タイムライン */
+  .tl-wrap{position:relative;min-width:max-content}
+  .tl-row{display:flex;align-items:stretch;border-bottom:1px solid var(--border)}
+  .tl-head{position:sticky;top:0;background:var(--bg2);z-index:2;font-size:10.5px;color:var(--text3)}
+  .tl-lane{flex:0 0 170px;padding:8px 10px;font-size:12.5px;font-weight:700;border-right:1px solid var(--border);background:var(--bg2);position:sticky;left:0;z-index:1}
+  .tl-track{flex:1;display:flex;position:relative}
+  .tl-day{flex:0 0 auto;text-align:center;padding:6px 0;border-right:1px solid var(--border)}
+  .tl-day.sun{color:#f87171}.tl-day.sat{color:#60a5fa}
+  .tl-bar{position:absolute;height:24px;border-radius:6px;color:#06222b;font-size:11px;font-weight:700;padding:3px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+  .tl-today{position:absolute;top:0;bottom:0;width:2px;background:#ef4444;z-index:3}
   .lists{display:flex;gap:12px;align-items:flex-start;height:100%}
   .list{flex:0 0 272px;max-height:100%;background:var(--bg2);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;max-height:calc(100vh - 150px)}
   .list.dragging{opacity:.5}
@@ -179,13 +226,13 @@
     <button class="btn" onclick="cbLogin()">サンプルとして入る（開発用）</button>
     <button class="btn ghost" disabled>Google でログイン（後日対応）</button>
     <div class="note">ボード・リスト・カード・ドラッグ＆ドロップ、カードの説明/ラベル/期限/担当/チェックリスト/コメントまで。本実装ではCoreFlow名簿と連動・リアルタイム同期。</div>
-    <div class="ver">CoreBoard v0.2.0 (mock)</div>
+    <div class="ver">CoreBoard v0.3.0 (mock)</div>
   </div>
 </div>
 
 <div id="app">
   <div id="topbar">
-    <div class="logo">📋 Core<b>Board</b><span class="ver">v0.2.0</span></div>
+    <div class="logo">📋 Core<b>Board</b><span class="ver">v0.3.0</span></div>
     <span class="dev-badge">🚧 開発中サンプル</span>
     <div class="spacer"></div>
     <button class="tb-btn" onclick="cbTheme()" id="theme-btn" title="テーマ切替">🌙</button>
@@ -203,7 +250,8 @@
         <button onclick="openBoardMenu(event)">⋯ メニュー</button>
       </div>
     </div>
-    <div id="board"><div class="lists" id="lists"></div></div>
+    <div class="v-tabs" id="v-tabs"></div>
+    <div id="board"></div>
   </div>
 </div>
 
@@ -318,6 +366,8 @@ function cardPass(c){
 /* ===== ボード描画 ===== */
 function dueState(c){ if(!c.due)return ''; if(c.dueDone)return 'done'; var t=new Date(); t.setHours(0,0,0,0); var d=new Date(c.due+'T00:00:00'); var diff=Math.round((d-t)/86400000); if(diff<0)return 'over'; if(diff===0)return 'today'; if(diff<=2)return 'soon'; return 'far'; }
 function dueLabel(c){ var p=c.due.split('-'); return (parseInt(p[1],10))+'/'+(parseInt(p[2],10)); }
+var curView='board', calCur=null;
+function setView(v){ curView=v; renderBoard(); }
 function renderBoard(){
   var b=board(); if(!b)return;
   document.getElementById('main').style.background='linear-gradient(180deg,'+b.bg+'22,transparent 240px)';
@@ -325,22 +375,109 @@ function renderBoard(){
   document.getElementById('b-scope').textContent=b.scope+'ボード';
   document.getElementById('b-mem').innerHTML=b.members.map(function(id){ var m=member(id)||{name:id,color:'#666'}; return '<span class="av" title="'+esc(m.name)+'" style="background:'+m.color+'">'+esc(initial(m.name))+'</span>'; }).join('');
   document.getElementById('b-filter').className=filterActive()?'act':'';
-  var h='';
+  renderTabs(); renderView();
+}
+function renderTabs(){
+  var tabs=[['board','📋 ボード'],['table','▦ テーブル'],['calendar','📅 カレンダー'],['timeline','📊 タイムライン'],['dashboard','📈 ダッシュボード']];
+  document.getElementById('v-tabs').innerHTML=tabs.map(function(t){ return '<button class="vtab'+(curView===t[0]?' on':'')+'" onclick="setView(\''+t[0]+'\')">'+t[1]+'</button>'; }).join('');
+}
+function renderView(){
+  if(curView==='table')return renderTable();
+  if(curView==='calendar')return renderCalendar();
+  if(curView==='timeline')return renderTimeline();
+  if(curView==='dashboard')return renderDashboard();
+  return renderKanban();
+}
+function allVisibleCards(){ var b=board(); var out=[]; b.lists.forEach(function(l){ l.cards.forEach(function(c){ if(cardPass(c))out.push({list:l,card:c}); }); }); return out; }
+
+/* ===== ビュー：ボード（カンバン） ===== */
+function renderKanban(){
+  var b=board(); var h='';
   b.lists.forEach(function(l){
     var cards=l.cards.filter(cardPass);
     h+='<div class="list" data-lid="'+l.id+'" ondragover="listDragOver(event,\''+l.id+'\')" ondrop="listDrop(event,\''+l.id+'\')">';
-    h+='<div class="list-h"><span class="lh-grip" draggable="true" ondragstart="listDragStart(event,\''+l.id+'\')" ondragend="listDragEnd(event)" title="ドラッグで並べ替え">⠿</span>'
-      +'<span class="lh-name" onclick="renameList(\''+l.id+'\')">'+esc(l.name)+'</span>'
-      +'<span class="lh-cnt">'+l.cards.length+'</span>'
-      +'<button class="lh-menu" onclick="openListMenu(event,\''+l.id+'\')">⋯</button></div>';
+    h+='<div class="list-h"><span class="lh-grip" draggable="true" ondragstart="listDragStart(event,\''+l.id+'\')" ondragend="listDragEnd(event)" title="ドラッグで並べ替え">⠿</span><span class="lh-name" onclick="renameList(\''+l.id+'\')">'+esc(l.name)+'</span><span class="lh-cnt">'+l.cards.length+'</span><button class="lh-menu" onclick="openListMenu(event,\''+l.id+'\')">⋯</button></div>';
     h+='<div class="list-c" id="lc-'+l.id+'" ondragover="cardsDragOver(event,\''+l.id+'\')">';
     cards.forEach(function(c){ h+=cardHTML(c,l.id); });
-    h+='</div>';
-    h+='<div class="list-f" id="lf-'+l.id+'"><button class="addc" onclick="startCompose(\''+l.id+'\')">＋ カードを追加</button></div>';
-    h+='</div>';
+    h+='</div><div class="list-f" id="lf-'+l.id+'"><button class="addc" onclick="startCompose(\''+l.id+'\')">＋ カードを追加</button></div></div>';
   });
   h+='<div class="add-list" id="add-list"><button onclick="startAddList()">＋ リストを追加</button></div>';
-  document.getElementById('lists').innerHTML=h;
+  document.getElementById('board').innerHTML='<div class="lists" id="lists">'+h+'</div>';
+}
+
+/* ===== ビュー：テーブル ===== */
+function renderTable(){
+  var rows=allVisibleCards();
+  var h='<table class="vt"><thead><tr><th>カード</th><th>リスト</th><th>ラベル</th><th>担当</th><th>期限</th><th>チェック</th></tr></thead><tbody>';
+  rows.forEach(function(r){ var c=r.card; var st=dueState(c);
+    h+='<tr onclick="openCard(\''+r.list.id+'\',\''+c.id+'\')">';
+    h+='<td>'+(c.cover?'<span class="tdot" style="background:'+c.cover+'"></span>':'')+esc(c.title)+'</td>';
+    h+='<td>'+esc(r.list.name)+'</td>';
+    h+='<td>'+c.labels.map(function(id){var l=labelOf(id);return l?'<span class="lb named" style="background:'+l.c+'">'+esc(l.n||'')+'</span> ':'';}).join('')+'</td>';
+    h+='<td>'+c.members.map(function(id){var m=member(id)||{name:id,color:'#666'};return '<span class="av" style="background:'+m.color+';width:22px;height:22px;font-size:10px;margin:0 1px">'+esc(initial(m.name))+'</span>';}).join('')+'</td>';
+    h+='<td>'+(c.due?'<span class="mi due '+st+'" style="display:inline-block">'+(c.dueDone?'✓ ':'')+esc(c.due)+'</span>':'<span style="color:var(--text3)">—</span>')+'</td>';
+    var ci=chkInfo(c); h+='<td>'+(ci.total?('☑ '+ci.done+'/'+ci.total):'<span style="color:var(--text3)">—</span>')+'</td></tr>';
+  });
+  if(!rows.length)h+='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px">カードがありません</td></tr>';
+  h+='</tbody></table>';
+  document.getElementById('board').innerHTML=h;
+}
+
+/* ===== ビュー：カレンダー ===== */
+function renderCalendar(){
+  if(!calCur)calCur=new Date();
+  var y=calCur.getFullYear(), mo=calCur.getMonth();
+  var rows=allVisibleCards(); var byDay={};
+  rows.forEach(function(r){ if(r.card.due){ (byDay[r.card.due]=byDay[r.card.due]||[]).push(r); } });
+  var lead=new Date(y,mo,1).getDay(), dim=new Date(y,mo+1,0).getDate(), todayIso=isoDay(new Date());
+  var dow=['日','月','火','水','木','金','土'];
+  var h='<div class="cal-head"><button onclick="calShift(-1)">‹</button><span class="cal-ym">'+y+'年 '+(mo+1)+'月</span><button onclick="calShift(1)">›</button><button onclick="calToday()" style="margin-left:6px">今日</button><span style="margin-left:auto;font-size:11px;color:var(--text3)">日付をダブルクリックでカード追加</span></div><div class="cal-grid">';
+  for(var i=0;i<7;i++)h+='<div class="cal-dow'+(i===0?' sun':i===6?' sat':'')+'">'+dow[i]+'</div>';
+  for(var k=0;k<lead;k++)h+='<div class="cal-cell empty"></div>';
+  for(var d=1;d<=dim;d++){ var iso=isoDay(new Date(y,mo,d)); var col=(lead+d-1)%7; var list=byDay[iso]||[];
+    h+='<div class="cal-cell'+(iso===todayIso?' today':'')+'" ondblclick="calAdd(\''+iso+'\')"><div class="cal-d'+(col===0?' sun':col===6?' sat':'')+'">'+d+'</div>';
+    list.forEach(function(r){ var c=r.card; var st=dueState(c); var lc=c.labels[0]?(labelOf(c.labels[0])||{}).c:c.cover; h+='<div class="cal-card '+st+'" onclick="event.stopPropagation();openCard(\''+r.list.id+'\',\''+c.id+'\')" title="'+esc(c.title)+'">'+(lc?'<span class="cc-dot" style="background:'+lc+'"></span>':'')+esc(c.title)+'</div>'; });
+    h+='</div>';
+  }
+  h+='</div>';
+  document.getElementById('board').innerHTML=h;
+}
+function calShift(n){ if(!calCur)calCur=new Date(); calCur=new Date(calCur.getFullYear(),calCur.getMonth()+n,1); renderCalendar(); }
+function calToday(){ calCur=new Date(); renderCalendar(); }
+function calAdd(iso){ var b=board(); if(!b.lists.length){ toast('先にボードビューでリストを作ってください'); return; } var t=prompt(iso+' のカード名'); if(!t)return; b.lists[0].cards.push(card(t,{due:iso})); saveAll(); renderCalendar(); }
+
+/* ===== ビュー：タイムライン ===== */
+function renderTimeline(){
+  var rows=allVisibleCards(); var dated=rows.filter(function(r){return r.card.due;});
+  if(!dated.length){ document.getElementById('board').innerHTML='<div style="padding:30px;color:var(--text3)">期限を設定したカードがありません。カードに期限を付けるとタイムラインに並びます。</div>'; return; }
+  var ds=dated.map(function(r){return r.card.due;}).sort();
+  var min=new Date(ds[0]+'T00:00:00'), max=new Date(ds[ds.length-1]+'T00:00:00'); min.setDate(min.getDate()-2); max.setDate(max.getDate()+2);
+  var days=Math.round((max-min)/86400000)+1, dw=36, W=170+days*dw, b=board();
+  var todayOff=Math.round((new Date(isoDay(new Date())+'T00:00:00')-min)/86400000);
+  var head='<div class="tl-row tl-head" style="width:'+W+'px"><div class="tl-lane">リスト</div><div class="tl-track">';
+  for(var i=0;i<days;i++){ var dd=new Date(min); dd.setDate(min.getDate()+i); head+='<div class="tl-day'+(dd.getDay()===0?' sun':dd.getDay()===6?' sat':'')+'" style="width:'+dw+'px">'+((dd.getDate()===1||i===0)?(dd.getMonth()+1)+'/':'')+dd.getDate()+'</div>'; }
+  head+='</div></div>';
+  var body='';
+  b.lists.forEach(function(l){ var cs=l.cards.filter(cardPass).filter(function(c){return c.due;}); if(!cs.length)return;
+    body+='<div class="tl-row" style="width:'+W+'px"><div class="tl-lane">'+esc(l.name)+'</div><div class="tl-track" style="height:'+(cs.length*30+6)+'px">';
+    cs.forEach(function(c,idx){ var off=Math.round((new Date(c.due+'T00:00:00')-min)/86400000); var lc=c.labels[0]?(labelOf(c.labels[0])||{}).c:(c.cover||'#06b6d4'); body+='<div class="tl-bar" onclick="openCard(\''+l.id+'\',\''+c.id+'\')" style="left:'+(off*dw)+'px;top:'+(idx*30+3)+'px;width:'+(dw-4)+'px;background:'+lc+'" title="'+esc(c.title)+' '+esc(c.due)+'">'+esc(c.title)+'</div>'; });
+    body+='</div></div>';
+  });
+  var tline=(todayOff>=0&&todayOff<days)?'<div class="tl-today" style="left:'+(170+todayOff*dw+dw/2)+'px"></div>':'';
+  document.getElementById('board').innerHTML='<div class="tl-wrap">'+tline+head+body+'</div>';
+}
+
+/* ===== ビュー：ダッシュボード ===== */
+function renderDashboard(){
+  var b=board(); var rows=allVisibleCards().map(function(r){return r.card;});
+  function bars(title,items){ var max=1; items.forEach(function(i){ if(i.v>max)max=i.v; }); var hh='<div class="dash-card"><div class="dash-h">'+title+'</div>'; if(!items.length)hh+='<div style="color:var(--text3);font-size:12px">データなし</div>'; items.forEach(function(i){ hh+='<div class="dbar"><span class="dbar-l">'+esc(i.k)+'</span><span class="dbar-t"><i style="width:'+Math.round(i.v/max*100)+'%;background:'+(i.c||'#06b6d4')+'"></i></span><span class="dbar-v">'+i.v+'</span></div>'; }); hh+='</div>'; return hh; }
+  var perList=b.lists.map(function(l){ return {k:l.name,v:l.cards.filter(cardPass).length}; });
+  var mm={}; rows.forEach(function(c){ c.members.forEach(function(id){ mm[id]=(mm[id]||0)+1; }); }); var perMem=Object.keys(mm).map(function(id){ var m=member(id)||{name:id,color:'#888'}; return {k:m.name,v:mm[id],c:m.color}; });
+  var ml={}; rows.forEach(function(c){ c.labels.forEach(function(id){ ml[id]=(ml[id]||0)+1; }); }); var perLab=Object.keys(ml).map(function(id){ var l=labelOf(id)||{n:'?',c:'#888'}; return {k:l.n||'(無名)',v:ml[id],c:l.c}; });
+  var dsx={over:0,today:0,soon:0,far:0,done:0,none:0}; rows.forEach(function(c){ var s=dueState(c)||'none'; dsx[s]=(dsx[s]||0)+1; });
+  var perDue=[{k:'期限切れ',v:dsx.over,c:'#eb5a46'},{k:'今日',v:dsx.today,c:'#f59e0b'},{k:'もうすぐ',v:dsx.soon,c:'#f2d600'},{k:'先',v:dsx.far,c:'#0079bf'},{k:'完了',v:dsx.done,c:'#61bd4f'},{k:'期限なし',v:dsx.none,c:'#64748b'}];
+  var h='<div class="dash-stat">カード総数 <b>'+rows.length+'</b> ／ リスト <b>'+b.lists.length+'</b></div><div class="dash-grid">'+bars('リスト別',perList)+bars('担当別',perMem)+bars('ラベル別',perLab)+bars('期限の状態',perDue)+'</div>';
+  document.getElementById('board').innerHTML=h;
 }
 function cardHTML(c,lid){
   var h='<div class="card" draggable="true" data-cid="'+c.id+'" data-lid="'+lid+'" onclick="openCard(\''+lid+'\',\''+c.id+'\')" ondragstart="cardDragStart(event,\''+lid+'\',\''+c.id+'\')" ondragend="cardDragEnd(event)">';
