@@ -241,13 +241,13 @@
     <button class="btn" onclick="cbLogin()">サンプルとして入る（開発用）</button>
     <button class="btn ghost" disabled>Google でログイン（後日対応）</button>
     <div class="note">ボード・リスト・カード・ドラッグ＆ドロップ、カードの説明/ラベル/期限/担当/チェックリスト/コメントまで。本実装ではCoreFlow名簿と連動・リアルタイム同期。</div>
-    <div class="ver">CoreBoard v0.4.0 (mock)</div>
+    <div class="ver">CoreBoard v0.4.1 (mock)</div>
   </div>
 </div>
 
 <div id="app">
   <div id="topbar">
-    <div class="logo">📋 Core<b>Board</b><span class="ver">v0.4.0</span></div>
+    <div class="logo">📋 Core<b>Board</b><span class="ver">v0.4.1</span></div>
     <span class="dev-badge">🚧 開発中サンプル</span>
     <div class="spacer"></div>
     <button class="tb-btn" onclick="cbTheme()" id="theme-btn" title="テーマ切替">🌙</button>
@@ -485,10 +485,15 @@ function renderGantt(){
     +'<span style="margin-left:auto;font-size:11px;color:var(--text3)">バーをドラッグ＝移動／端をドラッグ＝期間変更／クリック＝詳細</span></div>';
   if(!dated.length){ document.getElementById('board').innerHTML=tb+'<div style="padding:24px;color:var(--text3)">開始日・期限のあるカードがありません。カード詳細の「⏰ 開始日・期限」で日付を設定するとガントに並びます。</div>'+unsDrawer(uns); return; }
   var dw=({day:34,week:13,month:6})[ganttUnit], padd=({day:3,week:7,month:14})[ganttUnit];
+  var today=isoDay(new Date());
   var mins=dated.map(function(r){return barRange(r.card)[0];}).sort()[0];
   var es=dated.map(function(r){return barRange(r.card)[1];}).sort(); var maxs=es[es.length-1];
+  if(today<mins)mins=today; if(today>maxs)maxs=today;          // 今日を必ず範囲に含める
   var min=isoAdd(mins,-padd), max=isoAdd(maxs,padd);
-  var days=daysBetween(min,max)+1, W=190+days*dw;
+  var days=daysBetween(min,max)+1;
+  var MINDAYS=({day:70,week:140,month:400})[ganttUnit];        // 最低表示期間を確保（軸が短すぎ対策）
+  if(days<MINDAYS){ max=isoAdd(min,MINDAYS-1); days=MINDAYS; }
+  var W=190+days*dw;
   var todayOff=daysBetween(min,isoDay(new Date()));
   var monthRow='', dayRow='', curM=-1;
   for(var i=0;i<days;i++){ var dd=new Date(min+'T00:00:00'); dd.setDate(dd.getDate()+i);
